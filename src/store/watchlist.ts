@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useShallow } from 'zustand/react/shallow'
 import type { Movie, WatchlistEntry, WatchStatus } from '../types'
 
 interface WatchlistState {
@@ -64,12 +65,14 @@ export const useIsInWatchlist = (movieId: number): boolean =>
 
 /** Counts per status, for the tab badge and filter chips. */
 export const useStatusCounts = () =>
-  useWatchlist((s) => {
-    const counts: Record<WatchStatus, number> = {
-      'to-watch': 0,
-      watched: 0,
-      skip: 0,
-    }
-    for (const e of s.entries) counts[e.status]++
-    return counts
-  })
+  useWatchlist(
+    useShallow((s) => {
+      const counts: Record<WatchStatus, number> = {
+        'to-watch': 0,
+        watched: 0,
+        skip: 0,
+      }
+      for (const e of s.entries) counts[e.status]++
+      return counts
+    }),
+  )
