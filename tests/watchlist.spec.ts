@@ -3,7 +3,7 @@ import { seedWatchlist, makeEntry } from './helpers'
 
 test.describe('Watchlist page', () => {
   test('shows an empty state with no entries', async ({ page }) => {
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
     await expect(page.getByText('Your watchlist is empty')).toBeVisible()
   })
 
@@ -13,7 +13,7 @@ test.describe('Watchlist page', () => {
       makeEntry({ movieId: 2, title: 'Watched Movie', status: 'watched' }),
       makeEntry({ movieId: 3, title: 'Skip Movie', status: 'skip' }),
     ])
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
 
     await expect(page.getByText('3 movies saved')).toBeVisible()
     await expect(page.getByRole('button', { name: 'All (3)' })).toBeVisible()
@@ -31,7 +31,7 @@ test.describe('Watchlist page', () => {
       makeEntry({ movieId: 1, title: 'To Watch Movie', status: 'to-watch' }),
       makeEntry({ movieId: 2, title: 'Watched Movie', status: 'watched' }),
     ])
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
 
     await page.getByRole('button', { name: 'Watched (1)' }).click()
     await expect(page.getByRole('heading', { name: /Watched Movie/ })).toBeVisible()
@@ -43,7 +43,7 @@ test.describe('Watchlist page', () => {
 
   test('changing status on an entry updates counts and card', async ({ page }) => {
     await seedWatchlist(page, [makeEntry({ movieId: 1, title: 'To Watch Movie', status: 'to-watch' })])
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
 
     const card = page.locator('article').filter({ hasText: 'To Watch Movie' })
     await card.getByRole('button', { name: 'Watched' }).click()
@@ -54,7 +54,7 @@ test.describe('Watchlist page', () => {
 
   test('rating an entry fills the stars', async ({ page }) => {
     await seedWatchlist(page, [makeEntry({ movieId: 1, title: 'To Watch Movie' })])
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
 
     const card = page.locator('article').filter({ hasText: 'To Watch Movie' })
     await card.getByRole('button', { name: 'Rate 4 of 5' }).click()
@@ -68,7 +68,7 @@ test.describe('Watchlist page', () => {
 
   test('adding a note is written to persisted storage', async ({ page }) => {
     await seedWatchlist(page, [makeEntry({ movieId: 1, title: 'To Watch Movie' })])
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
 
     const card = page.locator('article').filter({ hasText: 'To Watch Movie' })
     const noteInput = card.getByPlaceholder('Add a private note…')
@@ -84,7 +84,7 @@ test.describe('Watchlist page', () => {
 
   test('removing an entry updates the count and can restore the empty state', async ({ page }) => {
     await seedWatchlist(page, [makeEntry({ movieId: 1, title: 'Only Movie' })])
-    await page.goto('/watchlist')
+    await page.goto('/#/watchlist')
 
     await expect(page.getByText('1 movies saved')).toBeVisible()
     const card = page.locator('article').filter({ hasText: 'Only Movie' })
